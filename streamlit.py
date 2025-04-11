@@ -55,7 +55,7 @@ def get_model_info():
     return api_request("model-info")
 
 def make_prediction(features):
-    """Envoie une requête de prédiction à l'API"""
+    """Envoie une requête de Classification à l'API"""
     data = {"features": features}
     return api_request("predict", method="POST", data=data)
 
@@ -63,7 +63,7 @@ def make_prediction(features):
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Sélectionnez une page",
-    ["Accueil", "Prédiction", "Rapport du projet"]
+    ["Accueil", "Classification", "Rapport du projet"]
 )
 
 # Vérification de la connexion à l'API
@@ -83,7 +83,7 @@ if page == "Accueil":
         Cette application permet d'interagir avec un modèle de machine learning via une API FastAPI.
         
         ### Fonctionnalités disponibles:
-        - 🔮 Faire des prédictions en temps réel
+        - 🔮 Faire des classifications en temps réel
         - 📊 Visualiser les résultats
         - 📝 Consulter le rapport du projet
         
@@ -149,12 +149,12 @@ if page == "Accueil":
         ```
         """)
 
-# Page de prédiction
-elif page == "Prédiction":
-    st.title("Prédiction avec le modèle")
+# Page de Classification
+elif page == "Classification":
+    st.title("Classification avec le modèle")
     
     if not api_status:
-        st.error("❌ API non connectée. Impossible de faire des prédictions.")
+        st.error("❌ API non connectée. Impossible de faire des classifications.")
         st.stop()
     
     # Récupération d'informations sur le modèle
@@ -188,15 +188,15 @@ elif page == "Prédiction":
                 features.append(feat_value)
         
         if st.button("Prédire", key="predict_form"):
-            with st.spinner('Prédiction en cours...'):
+            with st.spinner('Classification en cours...'):
                 result = make_prediction(features)
                 
                 if result:
-                    st.success("Prédiction réussie!")
+                    st.success("Classification réussie!")
                     
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.metric("Prédiction", value=result.get('prediction'))
+                        st.metric("Classification", value=result.get('classe'))
                     
                     if result.get('probability') is not None:
                         with col2:
@@ -236,17 +236,17 @@ elif page == "Prédiction":
                     st.warning(f"Attention: Le modèle s'attend à {n_features} caractéristiques, mais le CSV en contient {uploaded_df.shape[1]}.")
                 
                 if st.button("Prédire le premier exemple", key="predict_csv_first"):
-                    with st.spinner('Prédiction en cours...'):
+                    with st.spinner('Classification en cours...'):
                         features = uploaded_df.iloc[0].values.tolist()
                         result = make_prediction(features)
                         
                         if result:
-                            st.success("Prédiction réussie!")
-                            st.metric("Prédiction", value=result.get('prediction'))
+                            st.success("Classification réussie!")
+                            st.metric("Classification", value=result.get('prediction'))
                 
                 # Option pour prédire tous les exemples
                 if st.button("Prédire tous les exemples", key="predict_csv_all"):
-                    with st.spinner('Prédictions en cours...'):
+                    with st.spinner('Classifications en cours...'):
                         progress_bar = st.progress(0)
                         results = []
                         
@@ -265,15 +265,15 @@ elif page == "Prédiction":
                             
                         # Affichage des résultats
                         result_df = sampled_df.copy()
-                        result_df['Prédiction'] = results
+                        result_df['Classification'] = results
                         
-                        st.success(f"{len(results)} prédictions effectuées!")
+                        st.success(f"{len(results)} Classifications effectuées!")
                         st.dataframe(result_df)
                         
                         # Visualisation des résultats
                         if len(results) > 0 and all(r is not None for r in results):
-                            st.subheader("Distribution des prédictions")
-                            fig = px.histogram(result_df, x='Prédiction', title="Distribution des prédictions")
+                            st.subheader("Distribution des Classifications")
+                            fig = px.histogram(result_df, x='Classification', title="Distribution des Classifications")
                             st.plotly_chart(fig, use_container_width=True)
             
             except Exception as e:
@@ -300,16 +300,16 @@ elif page == "Prédiction":
         example_df = pd.DataFrame([features], columns=feature_names[:n_features])
         st.dataframe(example_df)
         
-        if st.button("Prédire", key="predict_example"):
-            with st.spinner('Prédiction en cours...'):
+        if st.button("Classer", key="predict_example"):
+            with st.spinner('Classification en cours...'):
                 result = make_prediction(features)
                 
                 if result:
-                    st.success("Prédiction réussie!")
+                    st.success("Classification réussie!")
                     
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.metric("Prédiction", value=result.get('prediction'))
+                        st.metric("Classification", value=result.get('prediction'))
                     
                     if result.get('probability') is not None:
                         with col2:
@@ -602,7 +602,7 @@ elif page == "Rapport du projet":
             x=classes,
             y=classes,
             color_continuous_scale='Blues',
-            labels=dict(x="Prédiction", y="Réalité", color="Nombre")
+            labels=dict(x="Classification", y="Réalité", color="Nombre")
         )
         
         fig.update_layout(
@@ -732,4 +732,4 @@ elif page == "Rapport du projet":
 
 # Footer
 st.markdown("---")
-st.markdown("Développé pour le projet de Machine Learning")
+st.markdown("Développé pour le HACK4IFRFI par le Groupe 4")
