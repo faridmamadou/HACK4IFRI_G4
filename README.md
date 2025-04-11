@@ -18,7 +18,7 @@ Développer un modèle robuste capable de **prédire les stades de la maladie r�
 ## 🛠️ Technologies et outils
 
 - Python (pandas, scikit-learn, matplotlib, seaborn)
-- Machine Learning : XGBoost, Random Forest, Logistic Regression
+- Machine Learning : XGBoost, Random Forest
 - Méthodes d'interprétabilité : SHAP, permutation importance
 - Analyse exploratoire et visualisation de données
 - (Optionnel : Streamlit / FastAPI pour l’interface ou l’API)
